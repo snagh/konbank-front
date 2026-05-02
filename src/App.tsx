@@ -65,6 +65,16 @@ export default function App() {
             placeholder="DD/MM/AAAA"
             registration={register("dataNascimento")}
             error={errors.dataNascimento?.message}
+            onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+              let value = e.target.value.replace(/\D/g, '');
+              if (value.length > 8) value = value.slice(0, 8);
+              if (value.length >= 5) {
+                value = `${value.slice(0, 2)}/${value.slice(2, 4)}/${value.slice(4)}`;
+              } else if (value.length >= 3) {
+                value = `${value.slice(0, 2)}/${value.slice(2)}`;
+              }
+              e.target.value = value;
+            }}
             icon={
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/>
