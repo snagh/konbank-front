@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Input } from "../Input";
+import { Select } from "../Select";
 import { useState } from "react";
 
 const step3Schema = z.object({
@@ -9,6 +10,7 @@ const step3Schema = z.object({
   rua: z.string().min(3, "Rua deve ter pelo menos 3 caracteres"),
   numero: z.string().min(1, "Número é obrigatório"),
   bairro: z.string().min(2, "Bairro é obrigatório"),
+  cidade: z.string().min(2, "Cidade é obrigatória"),
   estado: z.string().min(2, "Estado é obrigatório"),
 });
 
@@ -18,6 +20,36 @@ interface Step3Props {
   onNext: (data: Step3Data) => void;
   onBack: () => void;
 }
+
+const ESTADOS = [
+  { value: "AC", label: "Acre" },
+  { value: "AL", label: "Alagoas" },
+  { value: "AP", label: "Amapá" },
+  { value: "AM", label: "Amazonas" },
+  { value: "BA", label: "Bahia" },
+  { value: "CE", label: "Ceará" },
+  { value: "DF", label: "Distrito Federal" },
+  { value: "ES", label: "Espírito Santo" },
+  { value: "GO", label: "Goiás" },
+  { value: "MA", label: "Maranhão" },
+  { value: "MT", label: "Mato Grosso" },
+  { value: "MS", label: "Mato Grosso do Sul" },
+  { value: "MG", label: "Minas Gerais" },
+  { value: "PA", label: "Pará" },
+  { value: "PB", label: "Paraíba" },
+  { value: "PR", label: "Paraná" },
+  { value: "PE", label: "Pernambuco" },
+  { value: "PI", label: "Piauí" },
+  { value: "RJ", label: "Rio de Janeiro" },
+  { value: "RN", label: "Rio Grande do Norte" },
+  { value: "RS", label: "Rio Grande do Sul" },
+  { value: "RO", label: "Rondônia" },
+  { value: "RR", label: "Roraima" },
+  { value: "SC", label: "Santa Catarina" },
+  { value: "SP", label: "São Paulo" },
+  { value: "SE", label: "Sergipe" },
+  { value: "TO", label: "Tocantins" }
+];
 
 export function Step3({ onNext, onBack }: Step3Props) {
   const [isSearchingCep, setIsSearchingCep] = useState(false);
@@ -40,7 +72,8 @@ export function Step3({ onNext, onBack }: Step3Props) {
       // Mock de resposta
       setValue("rua", "Rua das Flores", { shouldValidate: true });
       setValue("bairro", "Centro", { shouldValidate: true });
-      setValue("estado", "São Paulo - SP", { shouldValidate: true });
+      setValue("cidade", "São Paulo", { shouldValidate: true });
+      setValue("estado", "SP", { shouldValidate: true });
       setIsSearchingCep(false);
     }, 800);
   };
@@ -93,12 +126,20 @@ export function Step3({ onNext, onBack }: Step3Props) {
         />
       </div>
 
-      <Input
-        label="Estado"
-        placeholder="Cidade - UF"
-        registration={register("estado")}
-        error={errors.estado?.message}
-      />
+      <div className="grid grid-cols-[2fr_1fr] gap-4">
+        <Input
+          label="Cidade"
+          placeholder="São Paulo"
+          registration={register("cidade")}
+          error={errors.cidade?.message}
+        />
+        <Select
+          label="Estado"
+          options={ESTADOS}
+          registration={register("estado")}
+          error={errors.estado?.message}
+        />
+      </div>
 
       <div className="flex gap-4 pt-6">
         <button
