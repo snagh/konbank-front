@@ -6,6 +6,7 @@ import { Step2 } from "./components/steps/Step2";
 import { Step3 } from "./components/steps/Step3";
 import type { Step3Data } from "./components/steps/Step3";
 import { Step4 } from "./components/steps/Step4";
+import { Step5 } from "./components/steps/Step5";
 
 export default function App() {
   const [step, setStep] = useState(1);
@@ -35,6 +36,12 @@ export default function App() {
     setStep(5);
   };
 
+  const handleFinish = () => {
+    console.log("Cadastro Concluído!");
+    // Aqui você poderia redirecionar o usuário para outra tela ou dashboard
+    alert("Redirecionando para o painel...");
+  };
+
   const handleBack = () => {
     setStep(prev => Math.max(1, prev - 1));
   };
@@ -62,25 +69,21 @@ export default function App() {
         <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] rounded-full bg-blue-50/50 blur-[120px]" />
       </div>
 
-      <section className="bg-white/80 glass w-full max-w-[640px] p-8 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white">
-        <Stepper 
-          currentStep={step} 
-          totalSteps={totalSteps} 
-          title={getStepTitle()} 
-        />
+      <section className={`bg-white/80 glass w-full max-w-[640px] ${step === 5 ? 'max-w-[480px] p-2' : 'p-8'} rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white transition-all duration-500`}>
+        {step < 5 && (
+          <Stepper 
+            currentStep={step} 
+            totalSteps={totalSteps} 
+            title={getStepTitle()} 
+          />
+        )}
 
         {step === 1 && <Step1 onNext={handleNextStep1} />}
         {step === 2 && <Step2 onNext={handleNextStep2} onBack={handleBack} />}
         {step === 3 && <Step3 onNext={handleNextStep3} onBack={handleBack} />}
         {step === 4 && <Step4 formData={formData} onNext={handleNextStep4} onBack={handleBack} onEditStep={handleEditStep} />}
-        {step > 4 && (
-          <div className="text-center py-10 text-slate-500">
-            Passo {step} em desenvolvimento...
-            <div className="mt-4">
-              <button onClick={handleBack} className="px-4 py-2 border rounded-md">Voltar</button>
-            </div>
-          </div>
-        )}
+        {step === 5 && <Step5 formData={formData} onFinish={handleFinish} />}
+
       </section>
     </main>
   );
