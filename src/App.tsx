@@ -3,12 +3,14 @@ import { Stepper } from "./components/Stepper";
 import { Step1 } from "./components/steps/Step1";
 import type { Step1Data } from "./components/steps/Step1";
 import { Step2 } from "./components/steps/Step2";
+import { Step3 } from "./components/steps/Step3";
+import type { Step3Data } from "./components/steps/Step3";
 
 export default function App() {
   const [step, setStep] = useState(1);
   const totalSteps = 5;
 
-  const [formData, setFormData] = useState<Partial<Step1Data>>({});
+  const [formData, setFormData] = useState<Partial<Step1Data & Step3Data>>({});
 
   const handleNextStep1 = (data: Step1Data) => {
     console.log("Step 1 Data:", data);
@@ -19,6 +21,12 @@ export default function App() {
   const handleNextStep2 = () => {
     console.log("Step 2 completed");
     setStep(3);
+  };
+
+  const handleNextStep3 = (data: Step3Data) => {
+    console.log("Step 3 Data:", data);
+    setFormData(prev => ({ ...prev, ...data }));
+    setStep(4);
   };
 
   const handleBack = () => {
@@ -53,7 +61,8 @@ export default function App() {
 
         {step === 1 && <Step1 onNext={handleNextStep1} />}
         {step === 2 && <Step2 onNext={handleNextStep2} onBack={handleBack} />}
-        {step > 2 && (
+        {step === 3 && <Step3 onNext={handleNextStep3} onBack={handleBack} />}
+        {step > 3 && (
           <div className="text-center py-10 text-slate-500">
             Passo {step} em desenvolvimento...
             <div className="mt-4">
