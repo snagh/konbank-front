@@ -1,32 +1,39 @@
 import { useState } from "react";
-import { useForm } from 'react-hook-form';
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Input } from "./components/Input";
 import { Stepper } from "./components/Stepper";
-
-// Validation Schema for Step 1
-const step1Schema = z.object({
-  nome: z.string().min(3, "O nome deve ter pelo menos 3 letras"),
-  cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$|^\d{11}$/, "CPF inválido"),
-  dataNascimento: z.string().min(10, "Data de nascimento inválida"),
-  email: z.string().email("E-mail inválido"),
-  telefone: z.string().min(10, "Telefone inválido"),
-});
-
-type Step1Data = z.infer<typeof step1Schema>;
+import { Step1 } from "./components/steps/Step1";
+import type { Step1Data } from "./components/steps/Step1";
+import { Step2 } from "./components/steps/Step2";
 
 export default function App() {
   const [step, setStep] = useState(1);
   const totalSteps = 5;
 
-  const { register, handleSubmit, formState: { errors } } = useForm<Step1Data>({
-    resolver: zodResolver(step1Schema)
-  });
+  const [formData, setFormData] = useState<Partial<Step1Data>>({});
 
-  const onSubmit = (data: Step1Data) => {
+  const handleNextStep1 = (data: Step1Data) => {
     console.log("Step 1 Data:", data);
+    setFormData(prev => ({ ...prev, ...data }));
     setStep(2);
+  };
+
+  const handleNextStep2 = () => {
+    console.log("Step 2 completed");
+    setStep(3);
+  };
+
+  const handleBack = () => {
+    setStep(prev => Math.max(1, prev - 1));
+  };
+
+  const getStepTitle = () => {
+    switch (step) {
+      case 1: return "Dados Básicos";
+      case 2: return "Envio De Documentos";
+      case 3: return "Endereço";
+      case 4: return "Revisar Dados";
+      case 5: return "Cadastro Aprovado!";
+      default: return "";
+    }
   };
 
   return (
@@ -37,71 +44,23 @@ export default function App() {
         <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] rounded-full bg-blue-50/50 blur-[120px]" />
       </div>
 
-      <section className="bg-white/80 glass w-full max-w-lg p-8 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white">
+      <section className="bg-white/80 glass w-full max-w-[640px] p-8 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white">
         <Stepper 
           currentStep={step} 
           totalSteps={totalSteps} 
-          title="Dados Básicos" 
+          title={getStepTitle()} 
         />
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-1">
-          <Input
-            label="Nome Completo"
-            placeholder="Digite seu nome completo"
-            registration={register("nome")}
-            error={errors.nome?.message}
-          />
-
-          <Input
-            label="CPF"
-            placeholder="000.000.000-00"
-            registration={register("cpf")}
-            error={errors.cpf?.message}
-          />
-
-          <Input
-            label="Data de Nascimento"
-            type="text"
-            placeholder="DD/MM/AAAA"
-            registration={register("dataNascimento")}
-            error={errors.dataNascimento?.message}
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/>
-              </svg>
-            }
-          />
-
-          <Input
-            label="E-mail"
-            type="email"
-            placeholder="seu@email.com"
-            registration={register("email")}
-            error={errors.email?.message}
-          />
-
-          <Input
-            label="Telefone"
-            placeholder="(00) 00000-0000"
-            registration={register("telefone")}
-            error={errors.telefone?.message}
-          />
-
-          <div className="flex gap-4 pt-6">
-            <button
-              type="button"
-              className="flex-1 px-6 py-3 border border-slate-200 text-slate-600 font-semibold rounded-xl hover:bg-slate-50 active:scale-[0.98] transition-all"
-            >
-              Voltar
-            </button>
-            <button
-              type="submit"
-              className="flex-1 px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl shadow-lg shadow-blue-200 hover:bg-blue-700 hover:shadow-blue-300 active:scale-[0.98] transition-all"
-            >
-              Continuar
-            </button>
+        {step === 1 && <Step1 onNext={handleNextStep1} />}
+        {step === 2 && <Step2 onNext={handleNextStep2} onBack={handleBack} />}
+        {step > 2 && (
+          <div className="text-center py-10 text-slate-500">
+            Passo {step} em desenvolvimento...
+            <div className="mt-4">
+              <button onClick={handleBack} className="px-4 py-2 border rounded-md">Voltar</button>
+            </div>
           </div>
-        </form>
+        )}
       </section>
     </main>
   );
