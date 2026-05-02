@@ -5,6 +5,7 @@ import type { Step1Data } from "./components/steps/Step1";
 import { Step2 } from "./components/steps/Step2";
 import { Step3 } from "./components/steps/Step3";
 import type { Step3Data } from "./components/steps/Step3";
+import { Step4 } from "./components/steps/Step4";
 
 export default function App() {
   const [step, setStep] = useState(1);
@@ -29,8 +30,17 @@ export default function App() {
     setStep(4);
   };
 
+  const handleNextStep4 = () => {
+    console.log("Step 4 completed. Final form data:", formData);
+    setStep(5);
+  };
+
   const handleBack = () => {
     setStep(prev => Math.max(1, prev - 1));
+  };
+
+  const handleEditStep = (stepNumber: number) => {
+    setStep(stepNumber);
   };
 
   const getStepTitle = () => {
@@ -62,7 +72,8 @@ export default function App() {
         {step === 1 && <Step1 onNext={handleNextStep1} />}
         {step === 2 && <Step2 onNext={handleNextStep2} onBack={handleBack} />}
         {step === 3 && <Step3 onNext={handleNextStep3} onBack={handleBack} />}
-        {step > 3 && (
+        {step === 4 && <Step4 formData={formData} onNext={handleNextStep4} onBack={handleBack} onEditStep={handleEditStep} />}
+        {step > 4 && (
           <div className="text-center py-10 text-slate-500">
             Passo {step} em desenvolvimento...
             <div className="mt-4">
@@ -74,3 +85,4 @@ export default function App() {
     </main>
   );
 }
+
