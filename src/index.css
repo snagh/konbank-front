@@ -1,5 +1,5 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
 
 :root {
   --brand-blue: #1E3A8A;
@@ -31,8 +31,4 @@ h1, h2, h3, h4 {
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
-
-/* Smooth transitions */
-* {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
+
